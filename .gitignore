@@ -1,0 +1,9 @@
+CMakeFiles
+.vscode
+
+CMakeCache.txt
+Makefile
+searching
+
+*.cmake
+
