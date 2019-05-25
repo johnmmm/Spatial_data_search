@@ -2,6 +2,7 @@
 
 int main()
 {
-    printf("running!\n");
+    GPTree new_tree;
+    new_tree.test_cmake();
     return 0;
 }

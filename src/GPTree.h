@@ -7,6 +7,13 @@
 
 using namespace std;
 
-
+class GPTree
+{
+public:
+    GPTree();
+    ~GPTree();
+    
+    void test_cmake();
+};
 
 #endif
