@@ -22,8 +22,8 @@ const bool DEBUG_=false;
 const bool Optimization_G_tree_Search=true;//是否开启全连接加速算法
 const bool Optimization_KNN_Cut=true;//是否开启KNN剪枝查询算法
 const bool Optimization_Euclidean_Cut=false;//是否开启Catch查询中基于欧几里得距离剪枝算法  // test
-const char Edge_File[]="data/road.nedge";//第一行两个整数n,m表示点数和边数，接下来m行每行三个整数U,V,C表示U->V有一条长度为C的边
-const char Node_File[]="data/road.cnode";//共N行每行一个整数两个实数id,x,y表示id结点的经纬度(但输入不考虑id，只顺序从0读到n-1，整数N在Edge文件里)
+const char Edge_File[]="./../data/road.nedge";//第一行两个整数n,m表示点数和边数，接下来m行每行三个整数U,V,C表示U->V有一条长度为C的边
+const char Node_File[]="./../data/road.cnode";//共N行每行一个整数两个实数id,x,y表示id结点的经纬度(但输入不考虑id，只顺序从0读到n-1，整数N在Edge文件里)
 const int Global_Scheduling_Cars_Per_Request=30000000;//每次规划精确计算前至多保留的车辆数目(时间开销)
 const double Unit = 1; //0.1;//路网文件的单位长度/m
 const double R_earth=6371000.0;//地球半径，用于输入经纬度转化为x,y坐标
@@ -164,7 +164,7 @@ void load_vector_pair(vector<pair<int,int> > &v)
 }
 void save_map_int_pair(map<int,pair<int,int> > &h)
 {
-	printf("%d\n",h.size());
+	printf("%lu\n", h.size());
 	map<int,pair<int,int> >::iterator iter;
 	for(iter=h.begin();iter!=h.end();iter++)
 		printf("%d %d %d\n",iter->first,iter->second.first,iter->second.second);
@@ -181,7 +181,7 @@ void load_map_int_pair(map<int,pair<int,int> > &h)
 }
 void save_map_int_int(map<int,int> &h)
 {
-	printf("%d\n",h.size());
+	printf("%lu\n", h.size());
 	map<int,int>::iterator iter;
 	for(iter=h.begin();iter!=h.end();iter++)
 		printf("%d %d\n",iter->first,iter->second);
@@ -289,7 +289,7 @@ struct Graph//无向图结构
 	}
 	void draw()//输出图结构
 	{	
-		printf("Graph:%d n=%d m=%d\n",this,n,m);
+		printf("Graph:%d n=%d m=%d\n", this, n, m);
 		for(int i=0;i<n;i++)cout<<id[i]<<' ';cout<<endl;
 		for(int i=0;i<n;i++)
 		{
@@ -1088,7 +1088,7 @@ struct G_Tree
 			node[x].color=node[x].G.Split(graph,node[x].part);
 			delete [] graph;
 			make_border(x,node[x].color);
-			if(node[x].n>50)printf("border=%d\n",node[x].borders.size());
+			if(node[x].n>50)printf("border=%lu\n",node[x].borders.size());
 			//传递border至子结点
 			map<int,pair<int,int> >::iterator iter;
 			for(iter=node[x].borders.begin();iter!=node[x].borders.end();iter++)
@@ -1121,7 +1121,7 @@ struct G_Tree
 				if(node[i].n>50)
 				{
 					printf("x=%d deep=%d n=%d ",i,node[i].deep,node[i].G.n);
-					printf("border=%d real_border=%d\n",node[i].borders.size(),real_border_number(i));
+					printf("border=%lu real_border=%d\n",node[i].borders.size(),real_border_number(i));
 				}
 			printf("begin_build_border_in_father_son\n");
 			build_border_in_father_son();
@@ -2683,17 +2683,17 @@ void GPTree::read_node()
 void GPTree::save()
 {
 	printf("begin save\n");
-	freopen("data/GP_Tree.data","w",stdout);
+	freopen("./../data/dev/GP_Tree.data","w",stdout);
 	tree.save();
-	freopen("/dev/tty","w",stdout);
+	freopen("./../data/dev/tty","w",stdout);
 	printf("save_over\n");
 }
 
 void GPTree::load()
 {
-	freopen("data/GP_Tree.data","r",stdin);
+	freopen("./../data/dev/GP_Tree.data","r",stdin);
 	tree.load();
-	freopen("/dev/tty","r",stdin);
+	freopen("./../data/dev/tty","r",stdin);
 
 	read_node();
 	//cout << coordinate.size();
