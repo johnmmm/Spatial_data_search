@@ -3,7 +3,7 @@ project(Spatial_search)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp GPTree.cpp GPTree.h)
+set(SOURCE_FILES main.cpp GPTree.cpp GPTree.h search.cpp search.h)
 set(METIS_LIBRARIES /usr/local/lib/libmetis.a)
 
 set(CMAKE_BUILD_TYPE Release)
