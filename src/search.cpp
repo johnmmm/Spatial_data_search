@@ -2,6 +2,7 @@
 
 using namespace std;
 
+vector< vector<int> > permutations[MAX_PASS+1];
 vector<Car> car_info;
 
 void split_strs(string& str1, string& str2, vector<string>& res)
@@ -36,19 +37,159 @@ Search::~Search()
 
 }
 
+void Search::init_tree()
+{
+    gptree.init();
+    gptree.read();
+    gptree.build_tree();
+    gptree.save();
+}
+
 void Search::init()
 {
     clear();
     printf("clear success!\n");
+
+    build_permutation();
+    printf("build permutation success!\n");
+
+    gptree.load();
+    printf("Load tree success!\n");
+
     read_cars();
     printf("read car success!\n");
+    
     //printf("print cars:\n");
     //print_cars();
+}
+
+void Search::init_dis_matrix(int car_pos, vector<int>& tar_pos_vec)
+{
+    int size = tar_pos_vec.size();
+
+    // clear
+    for (int i = 0; i < MAX_PASS+1; i++)
+        for (int j = 0; j < MAX_PASS+1; j++)
+            dis_matrix[i][j] = 0;
+
+    // init
+    for (int i = 1; i <= size; i++)
+    {
+        dis_matrix[0][i] = gptree.get_min_distance(car_pos, tar_pos_vec[i-1]);
+        dis_matrix[i][0] = dis_matrix[0][i];
+    }
+    for (int i = 1; i <= size; i++)
+    {
+        for (int j = i + 1; j <= size; j++)
+        {
+            dis_matrix[i][j] = gptree.get_min_distance(tar_pos_vec[i-1], tar_pos_vec[j-1]);
+            dis_matrix[j][i] = dis_matrix[i][j];
+        }
+    }
+}
+
+int Search::delivery_dis(int car_pos, vector<int>& tar_pos_vec)
+{
+    int min_dis = MAXN;
+    int size = tar_pos_vec.size();
+
+    if (size == 0)
+    {
+        min_dis = 0;
+        return min_dis;
+    }
+
+    for (int i = 0; i < permutations[size].size(); i++)
+    {
+        int distance = 0;
+        distance = dis_matrix[0][ permutations[size][i][0]+1 ];
+
+        for(int j = 1; j < size; ++j)
+            distance += dis_matrix[ permutations[size][i][j-1]+1 ][ permutations[size][i][j]+1 ];
+        if (distance < min_dis)
+            min_dis = distance;
+    }
+
+    return min_dis;
+}
+
+void Search::search_cars(int cur_pos, int tar_pos, vector<int>& res)
+{
+    
+    if (car_info.size() < 100000)
+    {
+        printf("Something must be wrong!\n");
+        return;
+    }
+    for (int i = 0; i < 100000; i++)
+    {
+        if (car_info[i].pass_num >= 4)
+            continue;
+        double distance = Euclidean_Dist(car_info[i].pos, cur_pos);
+        if (distance > 10000)
+            continue;
+        
+        int D2 = gptree.get_min_distance(car_info[i].pos, cur_pos);
+        if (D2 > 10000)
+            continue;
+        car_info[i].tar_pos.push_back(tar_pos);
+        init_dis_matrix(car_info[i].pos, car_info[i].tar_pos);
+        int D3 = delivery_dis(car_info[i].pos, car_info[i].tar_pos);
+        int D4 = dis_matrix[0][ car_info[i].pass_num+1 ];
+        car_info[i].tar_pos.pop_back();
+        if (D3 - D4 > 10000)
+            continue;
+        int D1 = delivery_dis(car_info[i].pos, car_info[i].tar_pos);
+        if (D2 + D3 - D1 > 10000)
+            continue;
+        // 可行的出租车
+        res.push_back(i);
+    }
 }
 
 void Search::clear()
 {
     car_info.clear();
+    for (int i = 0; i < MAX_PASS+1; i++)
+        permutations[i].clear();
+
+    for (int i = 0; i < MAX_PASS+1; i++)
+        for (int j = 0; j < MAX_PASS+1; j++)
+            dis_matrix[i][j] = 0;
+}
+
+void Search::build_permutation()
+{
+    // 建立全排列
+    for (int i = 1; i <= MAX_PASS; i++)
+    {
+        int arr[] = {1, 2, 3, 4};
+        do
+        {
+            vector<int> one_per;
+            one_per.clear();
+            for (int j = 0; j < i; j++)
+                one_per.push_back(arr[j]);
+            permutations[i].push_back(one_per);
+        } 
+        while (next_permutation(arr,arr+i));
+    }
+
+    // for (int i = 1; i <= MAX_PASS; i++)
+    // {
+    //     int size = permutations[i].size();
+    //     printf("num%d: ", i);
+    //     for (int j = 0; j < size; j++)
+    //     {
+    //         printf("{");
+    //         for (int k = 0; k < permutations[i][j].size(); k++)
+    //         {
+    //             printf("%d, ", permutations[i][j][k]);
+    //         }
+    //         printf("}, ");
+    //     }
+    //     printf("\n");
+    // }
 }
 
 void Search::read_cars()

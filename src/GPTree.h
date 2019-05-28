@@ -7,6 +7,8 @@
 
 using namespace std;
 
+double Euclidean_Dist(int S,int T);
+
 class GPTree
 {
 public:
