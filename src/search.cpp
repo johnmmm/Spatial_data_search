@@ -58,12 +58,12 @@ void Search::init()
 
     read_cars();
     printf("read car success!\n");
-    
+
     //printf("print cars:\n");
     //print_cars();
 }
 
-void Search::init_dis_matrix(int car_pos, vector<int>& tar_pos_vec)
+void Search::init_dis_matrix(int cur_pos, vector<int>& tar_pos_vec)
 {
     int size = tar_pos_vec.size();
 
@@ -75,7 +75,7 @@ void Search::init_dis_matrix(int car_pos, vector<int>& tar_pos_vec)
     // init
     for (int i = 1; i <= size; i++)
     {
-        dis_matrix[0][i] = gptree.get_min_distance(car_pos, tar_pos_vec[i-1]);
+        dis_matrix[0][i] = gptree.get_min_distance(cur_pos, tar_pos_vec[i-1]);
         dis_matrix[i][0] = dis_matrix[0][i];
     }
     for (int i = 1; i <= size; i++)
@@ -102,10 +102,10 @@ int Search::delivery_dis(int car_pos, vector<int>& tar_pos_vec)
     for (int i = 0; i < permutations[size].size(); i++)
     {
         int distance = 0;
-        distance = dis_matrix[0][ permutations[size][i][0]+1 ];
+        distance = dis_matrix[0][ permutations[size][i][0] ];
 
         for(int j = 1; j < size; ++j)
-            distance += dis_matrix[ permutations[size][i][j-1]+1 ][ permutations[size][i][j]+1 ];
+            distance += dis_matrix[ permutations[size][i][j-1] ][ permutations[size][i][j] ];
         if (distance < min_dis)
             min_dis = distance;
     }
@@ -126,23 +126,30 @@ void Search::search_cars(int cur_pos, int tar_pos, vector<int>& res)
         if (car_info[i].pass_num >= 4)
             continue;
         double distance = Euclidean_Dist(car_info[i].pos, cur_pos);
-        if (distance > 10000)
+        if (distance > 10000) // 也不知道为什么，这个加上就特别快
             continue;
         
         int D2 = gptree.get_min_distance(car_info[i].pos, cur_pos);
         if (D2 > 10000)
             continue;
         car_info[i].tar_pos.push_back(tar_pos);
-        init_dis_matrix(car_info[i].pos, car_info[i].tar_pos);
-        int D3 = delivery_dis(car_info[i].pos, car_info[i].tar_pos);
-        int D4 = dis_matrix[0][ car_info[i].pass_num+1 ];
+        
+        // D3这里为接到乘客后送人
+        init_dis_matrix(cur_pos, car_info[i].tar_pos);
+        int D3 = delivery_dis(cur_pos, car_info[i].tar_pos);
+        int D4 = gptree.get_min_distance(cur_pos, tar_pos);
         car_info[i].tar_pos.pop_back();
         if (D3 - D4 > 10000)
             continue;
+
+        // D1为直接送人
+        init_dis_matrix(car_info[i].pos, car_info[i].tar_pos);
         int D1 = delivery_dis(car_info[i].pos, car_info[i].tar_pos);
         if (D2 + D3 - D1 > 10000)
             continue;
+
         // 可行的出租车
+        //printf("Num: %d, D1: %d, D2: %d, D3: %d, D4: %d\n", i, D1, D2, D3, D4);
         res.push_back(i);
     }
 }
