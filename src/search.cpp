@@ -5,6 +5,11 @@ using namespace std;
 vector< vector<int> > permutations[MAX_PASS+1];
 vector<Car> car_info;
 
+bool cmp_taxi(pair<int, int> a, pair<int, int> b) //升序排序
+{ 
+    return a.second < b.second;
+}
+
 void split_strs(string& str1, string& str2, vector<string>& res)
 {
 	string::size_type p1, p2;
@@ -113,7 +118,7 @@ int Search::delivery_dis(int car_pos, vector<int>& tar_pos_vec)
     return min_dis;
 }
 
-void Search::search_cars(int cur_pos, int tar_pos, vector<int>& res)
+void Search::search_cars(int cur_pos, int tar_pos, vector< pair<int, int> >& res)
 {
     
     if (car_info.size() < 100000)
@@ -150,7 +155,8 @@ void Search::search_cars(int cur_pos, int tar_pos, vector<int>& res)
 
         // 可行的出租车
         //printf("Num: %d, D1: %d, D2: %d, D3: %d, D4: %d\n", i, D1, D2, D3, D4);
-        res.push_back(i);
+        res.emplace_back(i, D3 - D4 + D2 + D3 - D1);
+        sort(res.begin(), res.end(), cmp_taxi);
     }
 }
 

@@ -1,16 +1,23 @@
 #include "GPTree.h"
 #include "search.h"
 
-vector<int> result;
+vector< pair<int, int> > result;
+
+inline int minone (int a, int b)
+{
+    if (a < b)
+        return a;
+    return b;
+}
 
 void print_result()
 {
-    printf("print result: ");
-    for (int i = 0; i < result.size(); i++)
+    printf("print result: \n");
+    int size = minone(result.size(), 5);
+    for (int i = 0; i < size; i++)
     {
-        printf("%d, ", result[i]);
+        printf("Taxi num: %d, Total dis: %d\n", result[i].first, result[i].second);
     }
-    printf("\n");
 }
 
 int main()
@@ -25,7 +32,7 @@ int main()
     inter_time1 = clock();
 
     result.clear();
-    new_search.search_cars(285434, 227465, result);
+    new_search.search_cars(55961, 262074, result);
 
     inter_time2 = clock();
 

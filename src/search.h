@@ -41,7 +41,7 @@ public:
     void init();       // 运行启动
     void init_dis_matrix(int car_pos, vector<int>& tar_pos_vec); // 在每次计算前生成距离矩阵
     int delivery_dis(int car_pos, vector<int>& tar_pos_vec); // 计算送完当前车上所有人的距离
-    void search_cars(int cur_pos, int tar_pos, vector<int>& res);  // 寻找合适的车
+    void search_cars(int cur_pos, int tar_pos, vector< pair<int, int> >& res);  // 寻找合适的车
 
     void clear();
     void build_permutation();
