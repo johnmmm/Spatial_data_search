@@ -2685,15 +2685,15 @@ void GPTree::save()
 	printf("begin save\n");
 	freopen("./../data/dev/GP_Tree.data","w",stdout);
 	tree.save();
-	freopen("./../data/dev/tty","w",stdout);
+	freopen("/dev/tty","w",stdout);
 	printf("save_over\n");
 }
 
 void GPTree::load()
 {
-	freopen("./../data/dev/GP_Tree.data","r",stdin);
+    FILE *fp = freopen("./../data/dev/GP_Tree.data","r",stdin);
 	tree.load();
-	freopen("./../data/dev/tty","r",stdin);
+	freopen("/dev/tty","r",stdin);
 
 	read_node();
 	//cout << coordinate.size();
