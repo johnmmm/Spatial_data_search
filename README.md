@@ -12,3 +12,11 @@
 使用了第三方寻路算法库，来自：
 
     https://github.com/TsinghuaDatabaseGroup/GTree/tree/master/src
+
+### 2、metis.h的安装
+
+下载来自网上的库：
+
+    http://glaros.dtc.umn.edu/gkhome/metis/metis/download
+
+之后按照要求进行安装，在cmake当中添加链接所需要的库即可。
